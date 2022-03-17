@@ -4,7 +4,7 @@ import ssl
 from sklearn.naive_bayes import MultinomialNB
 
 
-class ScoreClassifier:
+class ScoreClassifierV1:
 
     def __init__(self,trainingData= None):
         try:

@@ -1,5 +1,5 @@
 import unittest
-from ScoreClassifier import ScoreClassifier
+from ScoreClassifierV1 import ScoreClassifier
 from DataHandler.DataHandler import DataHandler
 from ModelReport.ModelReport import ModelReport
 
@@ -48,7 +48,7 @@ class MyTestCases(unittest.TestCase):
         modelCreator = "Tobias Rothlin"
         mlPrinciple = "Multinomial Naive Bayes"
         refrences = {
-            'NultinomialNB Explained': "https://www.mygreatlearning.com/blog/multinomial-naive-bayes-explained/",
+            'NultinomialNB Explained': "https://towardsdatascience.com/sentimental-analysis-using-vader-a3415fef7664",
             'Stanford NLP Course': "http://spark-public.s3.amazonaws.com/nlp/slides/naivebayes.pdf",
             'Stanford NLP Lecture': "https://www.youtube.com/playlist?list=PLLssT5z_DsK8HbD2sPcUIDfQ7zmBarMYv",
             'Engilsh Stopwords': "https://www.tutorialspoint.com/python_text_processing/python_remove_stopwords.htm"
@@ -66,7 +66,7 @@ class MyTestCases(unittest.TestCase):
 
         testResult = []
         for testCase in testData:
-           testResult.append([myScoreClassifier.classify(testCase[0]),testCase[1]])
+           testResult.append([testCase[1],myScoreClassifier.classify(testCase[0])])
 
         modelReport.addTestResults(testResult)
         modelReport.createRaport("LocationClassification")
