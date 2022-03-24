@@ -1,7 +1,7 @@
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 
-class ScoreClassifierV15:
+class Vader:
 
     def __init__(self,trainingData= None):
         pass
@@ -22,5 +22,5 @@ class ScoreClassifierV15:
 
 if __name__ == '__main__':
     sen = "The room was very bad"
-    myScoreClassifier = ScoreClassifierV15()
+    myScoreClassifier = Vader()
     print(myScoreClassifier.classify(sen))

@@ -1,5 +1,5 @@
 import unittest
-from ScoreClassifierV1 import ScoreClassifier
+from MultinomialNaiveBayes import ScoreClassifier
 from DataHandler.DataHandler import DataHandler
 from ModelReport.ModelReport import ModelReport
 
