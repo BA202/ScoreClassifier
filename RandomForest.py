@@ -87,8 +87,3 @@ class RandomForest:
         sen = sen.lower()
         lem = self.__stemmer.stem(sen)
         return lem
-
-
-
-
-
