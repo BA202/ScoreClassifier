@@ -134,10 +134,11 @@ temp
 .DS_Store
 
 #Data files
-.csv
-.json
-.tsv
+*.csv
+*.json
+*.tsv
+*.html
 
-.pdf
-.svg
-.png
+*.pdf
+*.svg
+*.png

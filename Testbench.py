@@ -4,7 +4,7 @@ from Vader import Vader
 from SupportVectorMachine import SupportVectorMachine
 from RandomForest import RandomForest
 from RNN import RNN
-from DataHandler.DataHandler import DataHandler
+from DataHandler_IMDBDataSet import DataHandler
 from ModelReport.ModelReport import ModelReport
 
 import random

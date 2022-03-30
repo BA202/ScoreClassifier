@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 class MultinomialNaiveBayes:
 
-    def __init__(self,trainingData= None):
+    def __init__(self,trainingData= None,**kwargs):
         stopwords = ['from', 'him', 'shouldn', 'will', 'than', 'what', 'weren',
                      'over', "shouldn't", 'in', 'its', 'above', 'o', 'about',
                      'has', 'or', 'off', 'before', 'doesn', "you've", 'just',
@@ -61,3 +61,6 @@ class MultinomialNaiveBayes:
         sen = sen.lower()
         lem = self.__stemmer.stem(sen)
         return lem
+
+    def getParameters(self):
+        return self.__model.get_params()

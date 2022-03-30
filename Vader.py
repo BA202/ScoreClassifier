@@ -3,7 +3,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 class Vader:
 
-    def __init__(self,trainingData= None):
+    def __init__(self,trainingData= None,**kwargs):
         pass
 
 
@@ -18,7 +18,8 @@ class Vader:
             return "Neutral"
 
 
-
+    def getParameters(self):
+        return None
 
 if __name__ == '__main__':
     sen = "The room was very bad"

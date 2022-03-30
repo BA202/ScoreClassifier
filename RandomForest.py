@@ -6,7 +6,7 @@ from sklearn.model_selection import GridSearchCV
 
 class RandomForest:
 
-    def __init__(self,trainingData= None):
+    def __init__(self,trainingData= None,**kwargs):
         stopwords = ['from', 'him', 'shouldn', 'will', 'than', 'what', 'weren',
                      'over', "shouldn't", 'in', 'its', 'above', 'o', 'about',
                      'has', 'or', 'off', 'before', 'doesn', "you've", 'just',
@@ -52,8 +52,7 @@ class RandomForest:
              'n_estimators': [500, 1000, 1500],
              'max_depth': [5, 10, None],
              'min_samples_split': [5, 10, 15],
-             'min_samples_leaf': [1, 2, 5, 10],
-             'bootstrap': [True, False]}
+             'min_samples_leaf': [1, 2, 5, 10]}
 
             grid_search = GridSearchCV(RandomForestClassifier(), gridSearchParmeters,
                                        cv=5, return_train_score=True,
@@ -87,3 +86,6 @@ class RandomForest:
         sen = sen.lower()
         lem = self.__stemmer.stem(sen)
         return lem
+
+    def getParameters(self):
+        return self.__model.get_params()

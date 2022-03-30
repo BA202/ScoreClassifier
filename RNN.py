@@ -6,9 +6,10 @@ import numpy as np
 
 class RNN:
 
-    def __init__(self,trainingData= None, debugOn = False,isNotPredefined = False):
+    def __init__(self,trainingData= None, debugOn = False,isNotPredefined = False,**kwargs):
         self.__trainingData = trainingData
         self.__vocabSize = 5000
+
         labels = [data[1] for data in trainingData]
         if isNotPredefined:
             self.__LabelToID = {label: i for label,i in zip({lbl for lbl in labels},range(len({lbl for lbl in labels})))}
@@ -65,3 +66,6 @@ class RNN:
     def cleanUp(self,sen):
         sen = sen.lower()
         return sen
+
+    def getParameters(self):
+        return None
