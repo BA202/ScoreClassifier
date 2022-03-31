@@ -53,14 +53,9 @@ class RNN:
 
 
     def classify(self,sentence):
-        res = self.__model.predict(np.asarray([sentence]))
-        if res[0][0] < -0.5:
-            label = self.__IDToLabel[-1]
-        elif res[0][0] > 0.5:
-            label = self.__IDToLabel[1]
-        else:
-            label = self.__IDToLabel[0]
-        return label
+        res = self.__model(np.array(sentence))
+        print(sentence,res)
+        return "Positive"
 
 
     def cleanUp(self,sen):

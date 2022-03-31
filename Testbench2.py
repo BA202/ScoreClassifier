@@ -12,32 +12,13 @@ import traceback
 import json
 
 class testConstants:
-    folds = 2
+    folds = 10
     seed = 4.83819
     dataLocation = "/Users/tobiasrothlin/Documents/BachelorArbeit/DataSets/ClassifiedDataSetV1.3"
     balancedDataSet = False
     balancedSplitDataSet = True
 
     modelsToEvaluate = [
-        {
-            'data': 'Score',
-            'model': Vader,
-            'modelName': "Vader",
-            'modelCreator' : "Tobias Rothlin",
-            'mlPrinciple' : "Vader Sentiment Analysis",
-            'refrences' : {
-                'Vader overview': "https://towardsdatascience.com/sentimental-analysis-using-vader-a3415fef7664",
-                'Vader github': "https://github.com/cjhutto/vaderSentiment",
-
-            },
-            'algorithemDescription' : """Vader (Valence Aware Dictionary for sEntiment Reasoning) is a pre trained model used for sentiment analysis. Vader is a lexicon and rule-based sentiment analysis tool that is specifically attuned to sentiments expressed in social media. The backbone of Vader is a dictionary that maps lexical features to emotion intensities (sentiment score). To receive the sentiment score of a sentence the intensities of each word are added. For example, words like ‘love’, ‘enjoy’ indicating a positive sentiment. Vader is smart enough to understand basic context like ‘did not love’ as negative. Further it has a basic understanding of capitalization and punctuation to emphasis tone.  Due to this any preprocessing steps should not be done. """,
-            'graphicPath' : "/Users/tobiasrothlin/Documents/BachelorArbeit/ScoreClassifier/OverviewImg_Vader.png",
-            'graphicDescription' : "Classification Pipeline",
-            'dataSet' : f"ClassifiedDataSetV1.3 with {folds} folds cross validation",
-            'seed' : seed,
-            'kfolds': folds,
-            'opParams': None
-        },
         {
             'data': 'Score',
             'model': MultinomialNaiveBayes,
@@ -270,7 +251,7 @@ def modelPerofrmaceEvaluation(data,model,modelName,modelCreator,mlPrinciple,refr
 if __name__ == '__main__':
     testbenchDataHabler = DataHandler(testConstants.dataLocation)
     #loops through the testConstants dict
-    for model in testConstants.modelsToEvaluate[-1:]:
+    for model in testConstants.modelsToEvaluate[-3:-2]:
         print("-Loading dataset:")
         if model['data'] == "Score":
             testData = testbenchDataHabler.getScoreData(testConstants.balancedDataSet)
