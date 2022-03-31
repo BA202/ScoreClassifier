@@ -142,3 +142,7 @@ temp
 *.pdf
 *.svg
 *.png
+*.tar
+*.gz
+
+aclImdb

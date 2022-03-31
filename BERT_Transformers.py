@@ -13,17 +13,13 @@ class BERT_Transformers:
         self.__max_length = 512
         self.__batch_size = 6
 
-        (ds_train, ds_test), ds_info = tfds.load('imdb_reviews',
-                                                 split=(tfds.Split.TRAIN,
-                                                        tfds.Split.TEST),
-                                                 as_supervised=True,
-                                                 with_info=True)
-        dataset = tf.data.Dataset.from_generator(lambda: trainingData,str,
-                                                 output_shapes=[None])
+        (ds_train, ds_test), ds_info = tfds.load('imdb_reviews',split=(tfds.Split.TRAIN,tfds.Split.TEST),as_supervised=True,with_info=True)
+
+        dataset = tf.data.Dataset.from_generator(lambda: trainingData,str,output_shapes=[None])
         # train dataset
-        ds_train_encoded = self.__encode_examples(dataset).shuffle(10000).batch(self.__batch_size)
+        ds_train_encoded = self.__encode_examples(ds_train).shuffle(10000).batch(self.__batch_size)
         # test dataset
-        ds_test_encoded = self.__encode_examples(dataset).batch(self.__batch_size)
+        ds_test_encoded = self.__encode_examples(ds_test).batch(self.__batch_size)
 
 
         # recommended learning rate for Adam 5e-5, 3e-5, 2e-5

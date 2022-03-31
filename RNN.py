@@ -11,6 +11,7 @@ class RNN:
         self.__vocabSize = 5000
 
         labels = [data[1] for data in trainingData]
+
         if isNotPredefined:
             self.__LabelToID = {label: i for label,i in zip({lbl for lbl in labels},range(len({lbl for lbl in labels})))}
         else:
@@ -53,7 +54,7 @@ class RNN:
 
 
     def classify(self,sentence):
-        res = self.__model(np.array(sentence))
+        res = self.__model(np.array([sentence]))
         print(sentence,res)
         return "Positive"
 
