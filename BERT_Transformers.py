@@ -8,77 +8,49 @@ import tensorflow_datasets as tfds
 class BERT_Transformers:
 
     def __init__(self,trainingData= None,**kwargs):
-        self.__tokenizer = BertTokenizer.from_pretrained('bert-base-uncased',do_lower_case=True)
+        self.__model = TFBertForSequenceClassification.from_pretrained("bert-base-uncased")
+        self.__tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
 
-        self.__max_length = 512
-        self.__batch_size = 6
+        data = trainingData
+        tempData = []
+        for frame in data:
+            if not frame[1] == "Neutral":
+                if frame[1] == "Positive":
+                    tempData.append([frame[0], 1])
+                else:
+                    tempData.append([frame[0], 0])
 
-        (ds_train, ds_test), ds_info = tfds.load('imdb_reviews',split=(tfds.Split.TRAIN,tfds.Split.TEST),as_supervised=True,with_info=True)
+        data = tempData
+        train = pd.DataFrame(data[:-100],
+                             columns=['DATA_COLUMN', 'LABEL_COLUMN'])
+        test = pd.DataFrame(data[-100:-10],
+                            columns=['DATA_COLUMN', 'LABEL_COLUMN'])
 
-        dataset = tf.data.Dataset.from_generator(lambda: trainingData,str,output_shapes=[None])
-        # train dataset
-        ds_train_encoded = self.__encode_examples(ds_train).shuffle(10000).batch(self.__batch_size)
-        # test dataset
-        ds_test_encoded = self.__encode_examples(ds_test).batch(self.__batch_size)
+        DATA_COLUMN = 'DATA_COLUMN'
+        LABEL_COLUMN = 'LABEL_COLUMN'
 
+        train_InputExamples, validation_InputExamples = self.convert_data_to_examples(train, test, DATA_COLUMN, LABEL_COLUMN)
 
-        # recommended learning rate for Adam 5e-5, 3e-5, 2e-5
-        self.__learning_rate = 2e-5
-        # we will do just 1 epoch, though multiple epochs might be better as long as we will not overfit the model
-        self.__number_of_epochs = 1
+        train_data = self.convert_examples_to_tf_dataset(list(train_InputExamples),
+                                                    self.__tokenizer)
+        train_data = train_data.shuffle(100).batch(32).repeat(2)
 
-        self.__model = TFBertForSequenceClassification.from_pretrained('bert-base-uncased')
+        validation_data = self.convert_examples_to_tf_dataset(
+            list(validation_InputExamples), self.__tokenizer)
+        validation_data = validation_data.batch(32)
 
-        # choosing Adam optimizer
-        optimizer = tf.keras.optimizers.Adam(learning_rate=self.__learning_rate,
-                                             epsilon=1e-08)
-        # we do not have one-hot vectors, we can use sparce categorical cross entropy and accuracy
-        loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
-        metric = tf.keras.metrics.SparseCategoricalAccuracy('accuracy')
-        self.__model.compile(optimizer=optimizer, loss=loss, metrics=[metric])
-        bert_history = self.__model.fit(ds_train_encoded, epochs=self.__number_of_epochs,
-                                 validation_data=ds_test_encoded)
+        self.__model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=3e-5,
+                                                         epsilon=1e-08,
+                                                         clipnorm=1.0),
+                      loss=tf.keras.losses.SparseCategoricalCrossentropy(
+                          from_logits=True),
+                      metrics=[tf.keras.metrics.SparseCategoricalAccuracy(
+                          'accuracy')])
 
-
-    def __convert_example_to_feature(self,review):
-        return self.__tokenizer.encode_plus(review,
-                                     add_special_tokens=True,
-                                     # add [CLS], [SEP]
-                                     max_length=self.__max_length,
-                                     # max length of the text that can go to BERT
-                                     pad_to_max_length=True,
-                                     # add [PAD] tokens
-                                     return_attention_mask=True,
-                                     # add attention mask to not focus on pad tokens
-                                     )
-
-    def __map_example_to_dict(self,input_ids, attention_masks, token_type_ids, label):
-        return {
-                   "input_ids": input_ids,
-                   "token_type_ids": token_type_ids,
-                   "attention_mask": attention_masks,
-               }, label
-
-    def __encode_examples(self,ds, limit=-1):
-        # prepare list, so that we can build up final TensorFlow dataset from slices.
-        input_ids_list = []
-        token_type_ids_list = []
-        attention_mask_list = []
-        label_list = []
-        for review, label in tfds.as_numpy(ds):
-            bert_input = self.__convert_example_to_feature(review.decode())
-            input_ids_list.append(bert_input['input_ids'])
-            token_type_ids_list.append(bert_input['token_type_ids'])
-            attention_mask_list.append(bert_input['attention_mask'])
-            label_list.append([label])
-        return tf.data.Dataset.from_tensor_slices((input_ids_list,
-                                                   attention_mask_list,
-                                                   token_type_ids_list,
-                                                   label_list)).map(
-            self.__map_example_to_dict)
+        self.__model.fit(train_data, epochs=2, validation_data=validation_data, )
 
     def classify(self,sentence):
-        tf_batch = self.__tokenizer([sentence], max_length=128, padding=True,
+        tf_batch = self.__tokenizer(sentence, max_length=128, padding=True,
                              truncation=True, return_tensors='tf')
         tf_outputs = self.__model(tf_batch)
         tf_predictions = tf.nn.softmax(tf_outputs[0], axis=-1)
@@ -88,7 +60,62 @@ class BERT_Transformers:
         return labels[label[0]]
 
     def getParameters(self):
-        return None
+        return {'Model':'bert-base-uncased','Tokenizer':'bert-base-uncased'}
+
+
+    def convert_data_to_examples(self,train, test, DATA_COLUMN, LABEL_COLUMN):
+        train_InputExamples = train.apply(
+            lambda x: InputExample(guid=None, text_a=x[DATA_COLUMN],
+                                   text_b=None, label=x[LABEL_COLUMN]),
+            axis=1)
+        validation_InputExamples = test.apply(
+            lambda x: InputExample(guid=None, text_a=x[DATA_COLUMN],
+                                   text_b=None, label=x[LABEL_COLUMN]),
+            axis=1)
+        return train_InputExamples, validation_InputExamples
+
+    def convert_examples_to_tf_dataset(self,examples, tokenizer,
+                                       max_length=128):
+        features = []  # -> will hold InputFeatures to be converted later
+        for e in examples:
+            # Documentation is really strong for this method, so please take a look at it
+            input_dict = tokenizer.encode_plus(e.text_a,
+                                               add_special_tokens=True,
+                                               max_length=max_length,
+                                               return_token_type_ids=True,
+                                               return_attention_mask=True,
+                                               pad_to_max_length=True,
+                                               truncation=True)
+            input_ids, token_type_ids, attention_mask = (
+            input_dict["input_ids"], input_dict["token_type_ids"],
+            input_dict['attention_mask'])
+            features.append(InputFeatures(input_ids=input_ids,
+                                          attention_mask=attention_mask,
+                                          token_type_ids=token_type_ids,
+                                          label=e.label))
+        def gen():
+            for f in features:
+                yield (
+                    {
+                        "input_ids": f.input_ids,
+                        "attention_mask": f.attention_mask,
+                        "token_type_ids": f.token_type_ids,
+                    },
+                    f.label,
+                )
+        return tf.data.Dataset.from_generator(
+            gen,
+            ({"input_ids": tf.int32, "attention_mask": tf.int32,
+              "token_type_ids": tf.int32}, tf.int64),
+            (
+                {
+                    "input_ids": tf.TensorShape([None]),
+                    "attention_mask": tf.TensorShape([None]),
+                    "token_type_ids": tf.TensorShape([None]),
+                },
+                tf.TensorShape([]),
+            ),
+        )
 
 
 if __name__ == '__main__':
