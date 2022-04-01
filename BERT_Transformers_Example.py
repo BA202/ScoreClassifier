@@ -58,8 +58,15 @@ model.summary()
 myDataHandler = DataHandler("/Users/tobiasrothlin/Documents/BachelorArbeit/DataSets/ClassifiedDataSetV1.3")
 
 data = myDataHandler.getScoreData()
-data = [frame for frame in data if not frame[1] == "Neutral"]
+tempData = []
+for frame in data:
+    if not frame[1] == "Neutral":
+        if frame[1] == "Positive":
+            tempData.append([frame[0],1])
+        else:
+            tempData.append([frame[0], 0])
 
+data = tempData
 train = pd.DataFrame(data[:-100],columns=['DATA_COLUMN', 'LABEL_COLUMN'])
 test = pd.DataFrame(data[-100:-10],columns = ['DATA_COLUMN', 'LABEL_COLUMN'])
 
