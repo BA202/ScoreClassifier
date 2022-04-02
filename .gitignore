@@ -146,3 +146,4 @@ temp
 *.gz
 
 aclImdb
+TrainedModel_BERT_SentimentAnalysis_HotelReviews

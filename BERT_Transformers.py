@@ -50,8 +50,7 @@ class BERT_Transformers:
         self.__model.fit(train_data, epochs=2, validation_data=validation_data, )
 
     def classify(self,sentence):
-        tf_batch = self.__tokenizer(sentence, max_length=128, padding=True,
-                             truncation=True, return_tensors='tf')
+        tf_batch = self.__tokenizer(sentence, max_length=128, padding=True,truncation=True, return_tensors='tf')
         tf_outputs = self.__model(tf_batch)
         tf_predictions = tf.nn.softmax(tf_outputs[0], axis=-1)
         labels = ['Negative', 'Positive']

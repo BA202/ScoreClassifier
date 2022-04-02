@@ -251,7 +251,7 @@ def modelPerofrmaceEvaluation(data,model,modelName,modelCreator,mlPrinciple,refr
 if __name__ == '__main__':
     testbenchDataHabler = DataHandler(testConstants.dataLocation)
     #loops through the testConstants dict
-    for model in testConstants.modelsToEvaluate[-3:-2]:
+    for model in testConstants.modelsToEvaluate[2:3]:
         print("-Loading dataset:")
         if model['data'] == "Score":
             testData = testbenchDataHabler.getScoreData(testConstants.balancedDataSet)

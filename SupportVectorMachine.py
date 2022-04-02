@@ -3,6 +3,7 @@ from sklearn import svm
 from nltk.stem import PorterStemmer
 from sklearn.model_selection import GridSearchCV
 import numpy as np
+from sklearn.metrics import fbeta_score, make_scorer
 
 
 class SupportVectorMachine:
@@ -58,6 +59,8 @@ class SupportVectorMachine:
 
             train_vectors = self.__vectorizer.fit_transform([sample[0] for sample in self.__trainingData])
             if self.__doGridSearch:
+                score = make_scorer(self.lossFunction,
+                                    greater_is_better=False)
                 if kernel == "rbf" or kernel == "poly" or kernel == "sigmoid":
                     C_range = np.logspace(-2,2,13)
                     gamma_range = np.logspace(-9,1,13)
@@ -70,7 +73,7 @@ class SupportVectorMachine:
                 grid_search = GridSearchCV(svm.SVC(),
                                            gridSearchParmeters,
                                            cv=5, return_train_score=True,
-                                           n_jobs=-1)
+                                           n_jobs=-1,scoring=score)
                 grid_search.fit(train_vectors, [sample[1] for sample in
                                                 self.__trainingData])
 
@@ -108,6 +111,17 @@ class SupportVectorMachine:
         lem = self.__stemmer.stem(sen)
         return lem
 
+    @staticmethod
+    def lossFunction(y_true, y_pred):
+        error = 0
+        for yT,yP in zip(y_true,y_pred):
+            factor = 1
+            if yT == "Negative":
+                factor = 100
+
+            if not yT == yP:
+                error += factor
+        return error
 
     def getParameters(self):
         modelParams = self.__model.get_params()
