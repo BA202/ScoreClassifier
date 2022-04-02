@@ -68,7 +68,7 @@ for frame in data:
 
 data = tempData
 train = pd.DataFrame(data[:-100],columns=['DATA_COLUMN', 'LABEL_COLUMN'])
-test = pd.DataFrame(data[-100:-10],columns = ['DATA_COLUMN', 'LABEL_COLUMN'])
+test = pd.DataFrame(data[-100:],columns = ['DATA_COLUMN', 'LABEL_COLUMN'])
 
 DATA_COLUMN = 'DATA_COLUMN'
 LABEL_COLUMN = 'LABEL_COLUMN'
@@ -87,15 +87,4 @@ model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=3e-5, epsilon=1e-
 
 model.fit(train_data, epochs=2, validation_data=validation_data,)
 
-pred_sentences = [frame[0] for frame in data[-10:]]
-Lbl_pred_sentences = [frame[1] for frame in data[-10:]]
-
-
-tf_batch = tokenizer(pred_sentences, max_length=128, padding=True, truncation=True, return_tensors='tf')
-tf_outputs = model(tf_batch)
-tf_predictions = tf.nn.softmax(tf_outputs[0], axis=-1)
-labels = ['Negative','Positive']
-label = tf.argmax(tf_predictions, axis=1)
-label = label.numpy()
-for i in range(len(pred_sentences)):
-  print(pred_sentences[i], ": \n", labels[label[i]],Lbl_pred_sentences[i])
+model.save("BertSentiment.h5")
