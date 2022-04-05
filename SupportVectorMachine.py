@@ -72,7 +72,7 @@ class SupportVectorMachine:
 
                 grid_search = GridSearchCV(svm.SVC(),
                                            gridSearchParmeters,
-                                           cv=5, return_train_score=True,
+                                           cv=10, return_train_score=True,
                                            n_jobs=-1,scoring=score)
                 grid_search.fit(train_vectors, [sample[1] for sample in
                                                 self.__trainingData])

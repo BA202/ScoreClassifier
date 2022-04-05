@@ -81,10 +81,11 @@ train_data = train_data.shuffle(100).batch(32).repeat(2)
 validation_data = convert_examples_to_tf_dataset(list(validation_InputExamples), tokenizer)
 validation_data = validation_data.batch(32)
 
+callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=3e-5, epsilon=1e-08, clipnorm=1.0),
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=[tf.keras.metrics.SparseCategoricalAccuracy('accuracy')])
 
-model.fit(train_data, epochs=2, validation_data=validation_data,)
+model.fit(train_data, epochs=25, validation_data=validation_data,callbacks=[callback])
 
 model.save("BertSentiment.h5")
