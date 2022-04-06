@@ -3,10 +3,12 @@ from Vader import Vader
 from SupportVectorMachine import SupportVectorMachine
 from RandomForest import RandomForest
 from RNN import RNN
+from ZeroShotClassification import ZeroShotClassification
 from TransformesModel import TransformesModel
 from DataHandler.DataHandler import DataHandler
 from ModelReport.ModelReport import ModelReport
 from BERT_Transformers import BERT_Transformers
+from LDAToken import LDAToken
 import random
 import traceback
 import json
@@ -16,7 +18,7 @@ class testConstants:
     seed = 4.83819
     dataLocation = "/Users/tobiasrothlin/Documents/BachelorArbeit/DataSets/ClassifiedDataSetV1.3"
     balancedDataSet = False
-    balancedSplitDataSet = True
+    balancedSplitDataSet = False
 
     modelsToEvaluate = [
         {
@@ -184,6 +186,40 @@ class testConstants:
             'kfolds': folds,
             'opParams': None
         },
+        {
+            'data': 'Category',
+            'model': LDAToken,
+            'modelName': "LDAToken",
+            'modelCreator': "Tobias Rothlin",
+            'mlPrinciple': "LDA with SVM",
+            'refrences': {
+                'Text Classification with TF': "https://www.tensorflow.org/text/tutorials/text_classification_rnn"
+            },
+            'algorithemDescription': """A neural network that is intentionally run multiple times, where parts of each run feed into the next run. Specifically, hidden layers from the previous run provide part of the input to the same hidden layer in the next run. Recurrent neural networks are particularly useful for evaluating sequences, so that the hidden layers can learn from previous runs of the neural network on earlier parts of the sequence.""",
+            'graphicPath': "/Users/tobiasrothlin/Documents/BachelorArbeit/ScoreClassifier/TransformerPipeline.png",
+            'graphicDescription': "Classification Pipeline",
+            'dataSet': f"ClassifiedDataSetV1.3 with {folds} folds cross validation",
+            'seed': seed,
+            'kfolds': folds,
+            'opParams': None
+        },
+        {
+            'data': 'Category',
+            'model': ZeroShotClassification,
+            'modelName': "ZeroShotClassification",
+            'modelCreator': "Tobias Rothlin",
+            'mlPrinciple': "ZeroShotClassification",
+            'refrences': {
+                'Text Classification with TF': "https://www.tensorflow.org/text/tutorials/text_classification_rnn"
+            },
+            'algorithemDescription': """A neural network that is intentionally run multiple times, where parts of each run feed into the next run. Specifically, hidden layers from the previous run provide part of the input to the same hidden layer in the next run. Recurrent neural networks are particularly useful for evaluating sequences, so that the hidden layers can learn from previous runs of the neural network on earlier parts of the sequence.""",
+            'graphicPath': "/Users/tobiasrothlin/Documents/BachelorArbeit/ScoreClassifier/TransformerPipeline.png",
+            'graphicDescription': "Classification Pipeline",
+            'dataSet': f"ClassifiedDataSetV1.3 with {folds} folds cross validation",
+            'seed': seed,
+            'kfolds': folds,
+            'opParams': None
+        },
     ]
 
 
@@ -251,7 +287,7 @@ def modelPerofrmaceEvaluation(data,model,modelName,modelCreator,mlPrinciple,refr
 if __name__ == '__main__':
     testbenchDataHabler = DataHandler(testConstants.dataLocation)
     #loops through the testConstants dict
-    for model in testConstants.modelsToEvaluate[2:3]:
+    for model in testConstants.modelsToEvaluate[-1:]:
         print("-Loading dataset:")
         if model['data'] == "Score":
             testData = testbenchDataHabler.getScoreData(testConstants.balancedDataSet)

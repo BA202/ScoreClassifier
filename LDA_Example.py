@@ -1,11 +1,9 @@
 from DataHandler.DataHandler import DataHandler
 import gensim
-from gensim.utils import simple_preprocess
-from gensim.parsing.preprocessing import STOPWORDS
 from nltk.stem import WordNetLemmatizer, SnowballStemmer
-from nltk.stem.porter import *
-import numpy as np
+from sklearn import svm
 import nltk
+import numpy as np
 
 
 import os, ssl
@@ -21,8 +19,8 @@ testbenchDataHabler = DataHandler("/Users/tobiasrothlin/Documents/BachelorArbeit
 
 katData = testbenchDataHabler.getCategorieData("Location")
 stemmer = SnowballStemmer("english")
-testData = katData[-100:]
-katData = katData[:-100]
+trainingData = katData[:-100]
+verifcationData = katData[-100:]
 
 def lemmatize_stemming(text):
     return stemmer.stem(WordNetLemmatizer().lemmatize(text, pos='v'))
@@ -43,7 +41,7 @@ def preprocess(text):
 
 processed_docs = []
 
-for doc in katData:
+for doc in trainingData:
     processed_docs.append(preprocess(doc[0]))
 
 dictionary = gensim.corpora.Dictionary(processed_docs)
@@ -57,10 +55,31 @@ lda_model =  gensim.models.LdaModel(bow_corpus,
                                    passes = 10)
 
 
-
-for data in testData:
+dataView = {lable:[] for lable in {lbl[1] for lbl in trainingData}}
+for data in trainingData:
     # Data preprocessing step for the unseen document
     bow_vector = dictionary.doc2bow(preprocess(data[0]))
-    print(f"--{data[1]:20}-->",end="")
-    for index, score in [sorted(lda_model[bow_vector],key=lambda tup: -1 * tup[1])[0]]:
-        print("Topic: {}".format(lda_model.print_topic(index, 5)))
+    results = lda_model[bow_vector]
+    dataView[data[1]].append([result[1] for result in results])
+
+print(dataView)
+
+model = svm.SVC(kernel="rbf",C=2.1,gamma=1.5)
+vecSen = []
+vecLbl = []
+for key in dataView.keys():
+    for vec in dataView[key]:
+        value = [0,0,0,0,0,0,0,0]
+        for i,number in enumerate(vec):
+            value[i] = number
+        vecSen.append(value)
+        vecLbl.append(key)
+
+print(np.array(vecSen))
+model.fit(np.array(vecSen),vecLbl)
+
+for data in verifcationData:
+    bow_vector = dictionary.doc2bow(preprocess(data[0]))
+    results = lda_model[bow_vector]
+    res = model.predict(np.array([[result[1] for result in results]]))
+    print(data[1],res)
