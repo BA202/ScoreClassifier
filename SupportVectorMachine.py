@@ -65,7 +65,7 @@ class SupportVectorMachine:
                     C_range = np.logspace(-2,2,13)
                     gamma_range = np.logspace(-9,1,13)
                     degree = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-                    gridSearchParmeters = dict(gamma=gamma_range, C=C_range,kernel = [kernel],degree= degree,class_weight='balanced')
+                    gridSearchParmeters = dict(gamma=gamma_range, C=C_range,kernel = [kernel],degree= degree,class_weight=[{'Positive': 1, 'Negative':3}])
                 else:
                     gridSearchParmeters = {}
                     raise ValueError("Not able to perform grid search!")
@@ -73,7 +73,7 @@ class SupportVectorMachine:
                 grid_search = GridSearchCV(svm.SVC(),
                                            gridSearchParmeters,
                                            cv=10, return_train_score=True,
-                                           n_jobs=-1,scoring=score)
+                                           n_jobs=-1)
                 grid_search.fit(train_vectors, [sample[1] for sample in
                                                 self.__trainingData])
 
@@ -88,7 +88,7 @@ class SupportVectorMachine:
                 self.__model = svm.SVC(gamma=grid_search.best_params_['gamma'],
                 C=grid_search.best_params_['C'],
                 kernel=grid_search.best_params_['kernel'],
-                                       degree=grid_search.best_params_['degree'],class_weight='balanced')
+                                       degree=grid_search.best_params_['degree'],class_weight={'Positive': 1, 'Negative':3})
                 self.__model.fit(train_vectors, [sample[1] for sample in
                                                  self.__trainingData])
 

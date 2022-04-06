@@ -16,7 +16,7 @@ import json
 class testConstants:
     folds = 10
     seed = 4.83819
-    dataLocation = "/Users/tobiasrothlin/Documents/BachelorArbeit/DataSets/ClassifiedDataSetV1.3"
+    dataLocation = "/home/student/Desktop/Data"
     balancedDataSet = False
     balancedSplitDataSet = False
 
@@ -287,7 +287,7 @@ def modelPerofrmaceEvaluation(data,model,modelName,modelCreator,mlPrinciple,refr
 if __name__ == '__main__':
     testbenchDataHabler = DataHandler(testConstants.dataLocation)
     #loops through the testConstants dict
-    for model in testConstants.modelsToEvaluate[-1:]:
+    for model in testConstants.modelsToEvaluate[2:3]:
         print("-Loading dataset:")
         if model['data'] == "Score":
             testData = testbenchDataHabler.getScoreData(testConstants.balancedDataSet)
