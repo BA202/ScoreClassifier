@@ -62,10 +62,10 @@ class SupportVectorMachine:
                 score = make_scorer(self.lossFunction,
                                     greater_is_better=False)
                 if kernel == "rbf" or kernel == "poly" or kernel == "sigmoid":
-                    C_range = np.logspace(-2,2,13)
-                    gamma_range = np.logspace(-9,1,13)
+                    C_range = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]
+                    gamma_range = [1,1.2,1.3,1.4,1.5,1.6,1.7]
                     degree = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-                    gridSearchParmeters = dict(gamma=gamma_range, C=C_range,kernel = [kernel],degree= degree,class_weight=[{'Positive': 1, 'Negative':3}])
+                    gridSearchParmeters = dict(gamma=gamma_range, C=C_range,kernel = [kernel],degree= degree,class_weight=['balanced'])
                 else:
                     gridSearchParmeters = {}
                     raise ValueError("Not able to perform grid search!")
@@ -88,7 +88,7 @@ class SupportVectorMachine:
                 self.__model = svm.SVC(gamma=grid_search.best_params_['gamma'],
                 C=grid_search.best_params_['C'],
                 kernel=grid_search.best_params_['kernel'],
-                                       degree=grid_search.best_params_['degree'],class_weight={'Positive': 1, 'Negative':3})
+                                       degree=grid_search.best_params_['degree'],class_weight='balanced')
                 self.__model.fit(train_vectors, [sample[1] for sample in
                                                  self.__trainingData])
 
