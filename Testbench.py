@@ -1,7 +1,7 @@
 import unittest
 from MultinomialNaiveBayes import MultinomialNaiveBayes
 from Vader import Vader
-from SupportVectorMachine import SupportVectorMachine
+from SupportVectorMachine_English import SupportVectorMachine
 from RandomForest import RandomForest
 from RNN import RNN
 from DataHandler_IMDBDataSet import DataHandler

@@ -1,4 +1,4 @@
-from SupportVectorMachine import SupportVectorMachine
+from SupportVectorMachine_English import SupportVectorMachine
 from DataHandler.DataHandler import DataHandler
 from ModelReport.ModelReport import ModelReport
 import random
