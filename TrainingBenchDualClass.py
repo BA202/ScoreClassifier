@@ -8,7 +8,7 @@ import json
 class testConstants:
     folds = 10
     seed = 4.83819
-    dataLocation = "/Users/tobiasrothlin/Documents/BachelorArbeit/DataSets/ClassifiedDataSetV1.3"
+    dataLocation = "/home/student/Desktop/Data"
     balancedDataSet = False
     balancedSplitDataSet = False
 
@@ -115,16 +115,16 @@ if __name__ == '__main__':
 
         for lbl in allLabels:
             tempData = []
+            testData = testbenchDataHabler.getCategorieData(lbl,testConstants.balancedDataSet)
             for dataSample in testData:
                 if dataSample[1] == lbl:
                     tempData.append([dataSample[0],dataSample[1]])
                 else:
                     tempData.append([dataSample[0], "Not "+ lbl])
 
-            print(tempData)
             try:
                 print(f"{'Evaluating Model '+ model['modelName']:-^100s}")
-                modelPerofrmaceEvaluation(testData,model['model'],model['modelName']+"_"+lbl,model['modelCreator'],model['mlPrinciple'],model['refrences'],model['algorithemDescription'],model['graphicPath'],model['graphicDescription'],model['dataSet'],model['seed'],model['kfolds'],model['opParams'])
+                modelPerofrmaceEvaluation(tempData,model['model'],model['modelName']+"_"+lbl,model['modelCreator'],model['mlPrinciple'],model['refrences'],model['algorithemDescription'],model['graphicPath'],model['graphicDescription'],model['dataSet'],model['seed'],model['kfolds'],model['opParams'])
                 print(f"\u001b[32m{'Done Evaluating Model '+ model['modelName']:-^100s}")
                 print("\u001b[0m")
                 print(100*"-")
