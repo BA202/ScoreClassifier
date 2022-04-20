@@ -15,6 +15,7 @@ from tensorflow.keras.metrics import CategoricalAccuracy
 from tensorflow.keras.utils import to_categorical
 
 from DataHandler.DataHandler import DataHandler
+from ModelReport.ModelReport import ModelReport
 
 # And pandas for data import + sklearn because you allways need sklearn
 import pandas as pd
@@ -27,6 +28,9 @@ from sklearn.model_selection import train_test_split
 myDataHandler = DataHandler(lan="English")
 data = myDataHandler.getCategorieData("Location")
 
+myModelReport = ModelReport("BertForTextClassification","Tobias Rothlin","Bert Transformer",{},"Transformer","","","","")
+
+myModelReport.addTrainingSet(data[:-100])
 setOfCats = {sample[1] for sample in data}
 catToInt = {cat:i for i,cat in enumerate(list(setOfCats))}
 intToCat = {catToInt[key]:key for key in catToInt.keys()}
@@ -49,8 +53,10 @@ max_length = 100
 config = BertConfig.from_pretrained(model_name)
 config.output_hidden_states = False
 
+
 # Load BERT tokenizer
 tokenizer = BertTokenizerFast.from_pretrained(pretrained_model_name_or_path = model_name, config = config)
+
 
 # Load the Transformers BERT model
 transformer_model = TFBertModel.from_pretrained(model_name, config = config)
@@ -134,10 +140,11 @@ history = model.fit(
 #######################################
 ### ----- Evaluate the model ------ ###
 
-# Ready test data
-test_y_issue = to_categorical([sample[1] for sample in testData])
-test_x = tokenizer(
-    text=[sample[0] for sample in testData],
+testResults = []
+trainingResults = []
+
+for testCase in testData:
+    senVec = tokenizer(text=[testCase[0]],
     add_special_tokens=True,
     max_length=max_length,
     truncation=True,
@@ -146,9 +153,14 @@ test_x = tokenizer(
     return_token_type_ids = False,
     return_attention_mask = False,
     verbose = True)
+    print(senVec)
+    testResults.append(
+        [testCase[1], model(senVec)])
 
-# Run evaluation
-model_eval = model.evaluate(
-    x={'input_ids': test_x['input_ids']},
-    y={'category': test_y_issue}
-)
+
+myModelReport.addTestResults(testResults)
+myModelReport.addTrainingResults(trainingResults,
+                                 {"sa":"sa"})
+
+myModelReport.createRaport("Bert")
+
