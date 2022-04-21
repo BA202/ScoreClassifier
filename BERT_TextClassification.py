@@ -135,7 +135,7 @@ history = model.fit(
     y={'category': y_issue},
     validation_split=0.2,
     batch_size=64,
-    epochs=1)
+    epochs=10)
 
 
 #######################################
@@ -154,14 +154,14 @@ for testCase in testData:
     return_token_type_ids = False,
     return_attention_mask = False,
     verbose = True)
-    print(senVec)
     testResults.append(
-        [testCase[1], model(senVec)])
+        [intToCat[testCase[1]], intToCat[model(senVec)]])
 
 
 myModelReport.addTestResults(testResults)
-myModelReport.addTrainingResults(trainingResults,
+myModelReport.addTrainingResults(testResults,
                                  {"sa":"sa"})
 
-myModelReport.createRaport("Bert")
+print(testResults)
+myModelReport.createRaport("Bert_Text_Classification")
 
