@@ -55,6 +55,7 @@ config.output_hidden_states = False
 
 
 # Load BERT tokenizer
+
 tokenizer = BertTokenizerFast.from_pretrained(pretrained_model_name_or_path = model_name, config = config)
 
 
@@ -121,7 +122,7 @@ x = tokenizer(
     add_special_tokens=True,
     max_length=max_length,
     truncation=True,
-    padding=True,
+    padding='max_length',
     return_tensors='tf',
     return_token_type_ids = False,
     return_attention_mask = True,
@@ -134,7 +135,7 @@ history = model.fit(
     y={'category': y_issue},
     validation_split=0.2,
     batch_size=64,
-    epochs=10)
+    epochs=1)
 
 
 #######################################
@@ -148,7 +149,7 @@ for testCase in testData:
     add_special_tokens=True,
     max_length=max_length,
     truncation=True,
-    padding=True,
+    padding='max_length',
     return_tensors='tf',
     return_token_type_ids = False,
     return_attention_mask = False,
