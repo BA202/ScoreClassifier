@@ -32,6 +32,7 @@ myModelReport = ModelReport("BertForTextClassification","Tobias Rothlin","Bert T
 
 myModelReport.addTrainingSet(data[:-100])
 setOfCats = {sample[1] for sample in data}
+print(setOfCats)
 catToInt = {cat:i for i,cat in enumerate(list(setOfCats))}
 intToCat = {catToInt[key]:key for key in catToInt.keys()}
 data = [[sample[0],catToInt[sample[1]]] for sample in data]
