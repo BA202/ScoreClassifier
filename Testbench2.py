@@ -17,7 +17,7 @@ import json
 class testConstants:
     folds = 10
     seed = 4.83819
-    dataLocation = "/home/student/Desktop/Data"
+    dataLocation = ""
     balancedDataSet = False
     balancedSplitDataSet = False
 
