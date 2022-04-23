@@ -82,7 +82,7 @@ class BERT_TextClassification_Production:
                            return_token_type_ids=False,
                            return_attention_mask=False,
                            verbose=True)
-        return self.__intToCat[self.__model(senVec)]
+        return self.__intToCat[self.__model(senVec)['category']]
 
     def getParameters(self):
         return {'Model':'bert-base-uncased','Tokenizer':'bert-base-uncased'}
