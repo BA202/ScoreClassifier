@@ -9,6 +9,10 @@ from tensorflow.keras.losses import CategoricalCrossentropy
 from tensorflow.keras.metrics import CategoricalAccuracy
 from tensorflow.keras.utils import to_categorical
 
+import keras
+
+from datetime import datetime
+
 
 class BERT_TextClassification_Production:
 
@@ -73,12 +77,16 @@ class BERT_TextClassification_Production:
             return_attention_mask=True,
             verbose=True)
 
+        logdir = "logs/scalars/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+        tensorboard_callback = keras.callbacks.TensorBoard(log_dir=logdir)
+
         self.__model.fit(
             x={'input_ids': x['input_ids']},
             y={'category': y_issue},
             validation_split=0.2,
             batch_size=64,
-            epochs=10)
+            epochs=10,
+            callbacks=[tensorboard_callback])
 
     def classify(self, sentence):
         senVec = self.__tokenizer(text=[sentence],
