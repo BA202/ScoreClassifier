@@ -9,6 +9,7 @@ from DataHandler.DataHandler import DataHandler
 from ModelReport.ModelReport import ModelReport
 from BERT_Transformers import BERT_Transformers
 from BERT_TextClassification_Production import BERT_TextClassification_Production
+from SupportVectorMachineVectoriserTest import SupportVectorMachineVectoriserTest
 from LDAToken import LDAToken
 import random
 import traceback
@@ -231,6 +232,23 @@ class testConstants:
                 'Text Classification with TF': "https://www.tensorflow.org/text/tutorials/text_classification_rnn"
             },
             'algorithemDescription': """A neural network that is intentionally run multiple times, where parts of each run feed into the next run. Specifically, hidden layers from the previous run provide part of the input to the same hidden layer in the next run. Recurrent neural networks are particularly useful for evaluating sequences, so that the hidden layers can learn from previous runs of the neural network on earlier parts of the sequence.""",
+            'graphicPath': "/Users/tobiasrothlin/Documents/BachelorArbeit/ScoreClassifier/TransformerPipeline.png",
+            'graphicDescription': "Classification Pipeline",
+            'dataSet': f"ClassifiedDataSetV1.4 with {folds} folds cross validation",
+            'seed': seed,
+            'kfolds': folds,
+            'opParams': None
+        },
+        {
+            'data': 'Score',
+            'model': SupportVectorMachineVectoriserTest,
+            'modelName': "SVM WordToVec",
+            'modelCreator': "Tobias Rothlin",
+            'mlPrinciple': "WordToVec",
+            'refrences': {
+                'BertTokenizerFast': "https://huggingface.co/docs/transformers/model_doc/bert"
+            },
+            'algorithemDescription': """""",
             'graphicPath': "/Users/tobiasrothlin/Documents/BachelorArbeit/ScoreClassifier/TransformerPipeline.png",
             'graphicDescription': "Classification Pipeline",
             'dataSet': f"ClassifiedDataSetV1.4 with {folds} folds cross validation",

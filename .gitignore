@@ -144,7 +144,10 @@ temp
 *.png
 *.tar
 *.gz
+*.model
+*.bin
 
 aclImdb
 TrainedModel_BERT_SentimentAnalysis_HotelReviews
 DualClassClassificationV11
+logs

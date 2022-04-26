@@ -14,6 +14,10 @@ from tensorflow.keras.losses import CategoricalCrossentropy
 from tensorflow.keras.metrics import CategoricalAccuracy
 from tensorflow.keras.utils import to_categorical
 
+import keras
+
+from datetime import datetime
+
 from DataHandler.DataHandler import DataHandler
 from ModelReport.ModelReport import ModelReport
 
@@ -129,6 +133,9 @@ x = tokenizer(
     return_attention_mask = True,
     verbose = True)
 
+logdir = "logs/scalars/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+tensorboard_callback = keras.callbacks.TensorBoard(log_dir=logdir)
+
 # Fit the model
 history = model.fit(
     # x={'input_ids': x['input_ids'], 'attention_mask': x['attention_mask']},
@@ -136,7 +143,8 @@ history = model.fit(
     y={'category': y_issue},
     validation_split=0.2,
     batch_size=64,
-    epochs=10)
+    epochs=10,
+    callbacks=[tensorboard_callback],)
 
 
 #######################################

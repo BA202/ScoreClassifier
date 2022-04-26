@@ -10,10 +10,10 @@ class SupportVectorMachine:
     def __init__(self,lan="English",path="", debug=False,**kwargs):
         localDataHandler = DataHandler(folderPath=path,lan=lan)
 
-        self.__gamma = 0.5
-        self.__kernel = 'linear'
-        self.__C = 100
-        self.__degree = 3
+        self.__gamma = 1.2
+        self.__kernel = 'rbf'
+        self.__C = 0.3
+        self.__degree = 1
         self.__ListOfKat = ["Location","Room","Food","Staff","ReasonForStay", "GeneralUtility","HotelOrganisation"]
         self.__classifiers = []
 
