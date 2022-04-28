@@ -9,6 +9,7 @@ from DataHandler.DataHandler import DataHandler
 from ModelReport.ModelReport import ModelReport
 from BERT_Transformers import BERT_Transformers
 from BERT_TextClassification_Production import BERT_TextClassification_Production
+from PretrainedMultiClassFineTuning import PretrainedMultiClassFineTuning
 from SupportVectorMachineVectoriserTest import SupportVectorMachineVectoriserTest
 from LDAToken import LDAToken
 import random
@@ -245,6 +246,23 @@ class testConstants:
             'modelName': "SVM WordToVec",
             'modelCreator': "Tobias Rothlin",
             'mlPrinciple': "WordToVec",
+            'refrences': {
+                'BertTokenizerFast': "https://huggingface.co/docs/transformers/model_doc/bert"
+            },
+            'algorithemDescription': """""",
+            'graphicPath': "/Users/tobiasrothlin/Documents/BachelorArbeit/ScoreClassifier/TransformerPipeline.png",
+            'graphicDescription': "Classification Pipeline",
+            'dataSet': f"ClassifiedDataSetV1.4 with {folds} folds cross validation",
+            'seed': seed,
+            'kfolds': folds,
+            'opParams': None
+        },
+        {
+            'data': 'Category',
+            'model': PretrainedMultiClassFineTuning,
+            'modelName': "SVM Pretrained Multiclass Fine tuning",
+            'modelCreator': "Tobias Rothlin",
+            'mlPrinciple': "Pretrained Multiclass Fine tuning",
             'refrences': {
                 'BertTokenizerFast': "https://huggingface.co/docs/transformers/model_doc/bert"
             },
