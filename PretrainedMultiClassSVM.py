@@ -1,31 +1,31 @@
-from transformers import TFAutoModel
+from transformers import TFBertModel
 from transformers import AutoTokenizer
 from sklearn import svm
 from sklearn.model_selection import GridSearchCV
 import os
+import tensorflow as tf
 
-class PretrainedMultiClassFineTuning:
+class PretrainedMultiClassSVM:
 
     def __init__(self, trainingData=None, **kwargs):
-        os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+        os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
-        modelName = 'distilbert-base-uncased'
+        modelName = 'bert-base-uncased'
 
         setOfCats = list({sample[1] for sample in trainingData})
         self.__catToInt = {cat: i for i, cat in enumerate(list(setOfCats))}
         self.__intToCat = {self.__catToInt[key]: key for key in self.__catToInt.keys()}
 
         self.__tokenizer = AutoTokenizer.from_pretrained(modelName)
-        self.__preModel = TFAutoModel.from_pretrained(modelName,from_pt=True)
-
+        self.__preModel = TFBertModel.from_pretrained(modelName,from_pt=True)
         inputVectors = [self.__bertTransformation(sample[0]) for sample in trainingData]
         outputLable = [sample[1] for sample in trainingData]
 
         #SVM
-
+        print("GridSearchStarted")
         C_range = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
         gamma_range = [1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7]
-        degree = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        degree = [3]
         gridSearchParmeters = dict(gamma=gamma_range, C=C_range,kernel=['rbf'], degree=degree,class_weight=['balanced'])
         grid_search = GridSearchCV(svm.SVC(),gridSearchParmeters,cv=10, return_train_score=True,n_jobs=-1)
         grid_search.fit(inputVectors, outputLable)
@@ -46,18 +46,16 @@ class PretrainedMultiClassFineTuning:
 
 
     def classify(self, sentence):
-        prediction = self.__model.predict(self.__bertTransformation(sentence))
+        prediction = self.__model.predict([self.__bertTransformation(sentence)])
         return prediction[0]
 
     def __bertTransformation(self,sen):
         inputs = self.__tokenizer(sen, return_tensors="tf")
-        output = self.__preModel(**inputs)
-        return output.last_hidden_state[:, 0]
+        output = self.__preModel(inputs)
+        return output.last_hidden_state[:, 0][0]
 
     def getParameters(self):
         modelParams = self.__model.get_params()
         return {'kernel': modelParams['kernel'],
                 'degree': modelParams['degree'], 'gamma': modelParams['gamma'],
                 'C': modelParams['C'], 'max_iter': modelParams['max_iter']}
-
-

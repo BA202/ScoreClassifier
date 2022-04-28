@@ -9,7 +9,7 @@ from DataHandler.DataHandler import DataHandler
 from ModelReport.ModelReport import ModelReport
 from BERT_Transformers import BERT_Transformers
 from BERT_TextClassification_Production import BERT_TextClassification_Production
-from PretrainedMultiClassFineTuning import PretrainedMultiClassFineTuning
+from PretrainedMultiClassSVM import PretrainedMultiClassSVM
 from SupportVectorMachineVectoriserTest import SupportVectorMachineVectoriserTest
 from LDAToken import LDAToken
 import random
@@ -259,7 +259,7 @@ class testConstants:
         },
         {
             'data': 'Category',
-            'model': PretrainedMultiClassFineTuning,
+            'model': PretrainedMultiClassSVM,
             'modelName': "SVM Pretrained Multiclass Fine tuning",
             'modelCreator': "Tobias Rothlin",
             'mlPrinciple': "Pretrained Multiclass Fine tuning",
