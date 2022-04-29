@@ -8,9 +8,13 @@ import tensorflow as tf
 class PretrainedMultiClassSVM:
 
     def __init__(self, trainingData=None, **kwargs):
+
+
         os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
         modelName = 'bert-base-uncased'
+        if 'param' in kwargs.keys():
+            modelName = kwargs['param']
 
         setOfCats = list({sample[1] for sample in trainingData})
         self.__catToInt = {cat: i for i, cat in enumerate(list(setOfCats))}

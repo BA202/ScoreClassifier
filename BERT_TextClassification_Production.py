@@ -31,6 +31,7 @@ class BERT_TextClassification_Production:
 
         config = BertConfig.from_pretrained(model_name)
         config.output_hidden_states = False
+
         self.__tokenizer = BertTokenizerFast.from_pretrained(
             pretrained_model_name_or_path=model_name, config=config)
         transformer_model = TFBertModel.from_pretrained(model_name,
@@ -50,8 +51,7 @@ class BERT_TextClassification_Production:
             stddev=config.initializer_range), name='issue')(pooled_output)
         outputs = {'category': category}
 
-        self.__model = Model(inputs=inputs, outputs=outputs,
-                             name='BERT_MultiLabel_MultiClass')
+        self.__model = Model(inputs=inputs, outputs=outputs,name='BERT_MultiLabel_MultiClass')
 
         optimizer = Adam(
             learning_rate=5e-05,
