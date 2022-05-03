@@ -18,6 +18,7 @@ epochs = 5
 learning_rate = 5e-5
 seed = 6.838324
 language = "English"
+path = f"{modelName}_{language}_sentiment"
 
 productionReport = ModelReport(
     modelName,
@@ -115,14 +116,13 @@ productionReport.addTrainingResults(
     trainingResults, {"Epochs": str(epochs), "learning_rate": str(learning_rate)}
 )
 
-productionReport.createRaport(f"{modelName}_{language}_sentiment")
+productionReport.createRaport(path)
 
 pipeline = transformers.pipeline(
     "text-classification", model=model, tokenizer=tokenizer
 )
 
 # Save pipeline
-path = f"{modelName}_{language}_sentiment"
 pipeline.save_pretrained(path)
 # Save manifest (needed by OVHcloud ML Serving to load your pipeline)
 with open(path + "/manifest.json", "w") as file:
@@ -136,3 +136,6 @@ with open(path + "/manifest.json", "w") as file:
         file,
         indent=2,
     )
+
+with open(path + '/intToClass.json', 'w') as file:
+    json.dump(intToCat, file, indent=2)
