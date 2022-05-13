@@ -149,5 +149,14 @@ temp
 
 aclImdb
 TrainedModel_BERT_SentimentAnalysis_HotelReviews
+bert-base-uncased_English_classification
+bert-base-german-cased_German_sentiment
+bert-base-german-cased_German_classification
+bert-base-uncased_English_sentiment
 DualClassClassificationV11
 logs
+metadata.tsv
+complaints.csv
+HotelSentiment
+aclImdb_v1.tar.gz
+*.ai

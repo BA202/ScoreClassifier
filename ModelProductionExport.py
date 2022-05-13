@@ -54,6 +54,7 @@ model = TFAutoModelForSequenceClassification.from_pretrained(
 tfTrainingData = []
 
 productionReport.addTrainingSet(trainingData)
+
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 metric = tf.metrics.SparseCategoricalAccuracy()
