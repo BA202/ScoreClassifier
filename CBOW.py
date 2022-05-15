@@ -4,13 +4,21 @@ from keras.layers import Dense, Embedding, Lambda
 from tensorflow.keras.layers import TextVectorization
 import tensorflow as tf
 from tensorflow.keras.utils import to_categorical
-import re
+from DataHandler.DataHandler import DataHandler
+import io
 
+
+runOnBitDataSet = False
 
 sentenceData = []
-with open("Hotel_Reviews_ForEmbedding_Clean.txt") as inputFile:
-    for line in inputFile.read().split("\n"):
-        sentenceData.append(line)
+if runOnBitDataSet:
+    with open("Hotel_Reviews_ForEmbedding_Clean.txt") as inputFile:
+        for line in inputFile.read().split("\n"):
+            sentenceData.append(line)
+else:
+    myDataHandler = DataHandler()
+    sentenceData = [sample[0] for sample in myDataHandler.getScoreData()]
+
 
 windowSize = 1
 
@@ -63,7 +71,21 @@ model.fit(
     y = to_categorical(vectorize_layer(listOfTargetWords),num_classes=vocab_size),
     validation_split=0.2,
     batch_size=64,
-    epochs=50,
+    epochs=30,
     callbacks=[tensorboard_callback])
 
 model.summary()
+weights = model.get_layer('embedding').get_weights()[0]
+vocab = vectorize_layer.get_vocabulary()
+
+out_v = io.open('vectors.tsv', 'w', encoding='utf-8')
+out_m = io.open('metadata.tsv', 'w', encoding='utf-8')
+
+for index, word in enumerate(vocab):
+  if index == 0:
+    continue  # skip 0, it's padding.
+  vec = weights[index]
+  out_v.write('\t'.join([str(x) for x in vec]) + "\n")
+  out_m.write(word + "\n")
+out_v.close()
+out_m.close()

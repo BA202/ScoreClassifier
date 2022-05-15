@@ -13,8 +13,6 @@ class PretrainedMultiClassSVM:
         os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
         modelName = 'bert-base-uncased'
-        if 'param' in kwargs.keys():
-            modelName = kwargs['param']
 
         setOfCats = list({sample[1] for sample in trainingData})
         self.__catToInt = {cat: i for i, cat in enumerate(list(setOfCats))}
@@ -24,7 +22,7 @@ class PretrainedMultiClassSVM:
         self.__preModel = TFBertModel.from_pretrained(modelName,from_pt=True)
         inputVectors = [self.__bertTransformation(sample[0]) for sample in trainingData]
         outputLable = [sample[1] for sample in trainingData]
-
+        print(inputVectors[0])
         #SVM
         print("GridSearchStarted")
         C_range = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
@@ -63,3 +61,4 @@ class PretrainedMultiClassSVM:
         return {'kernel': modelParams['kernel'],
                 'degree': modelParams['degree'], 'gamma': modelParams['gamma'],
                 'C': modelParams['C'], 'max_iter': modelParams['max_iter']}
+

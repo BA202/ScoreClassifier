@@ -1,12 +1,17 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
 import gensim
-from gensim.models import Word2Vec
 import numpy as np
-from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from sklearn import svm
 from nltk.stem import PorterStemmer
+from sklearn.model_selection import GridSearchCV
 from nltk.tokenize import word_tokenize
+from transformers import AutoTokenizer
+from tensorflow.keras.utils import to_categorical
+from scipy.sparse import csr_matrix, vstack
+
+
 
 
 class SupportVectorMachineVectoriserTest:
@@ -41,16 +46,50 @@ class SupportVectorMachineVectoriserTest:
                      'hers', 'each', 'don', 'can', 'a', 'herself']
 
         self.__stemmer = PorterStemmer()
-        self.__vectorizer = Doc2Vec.load("GoogleNews-vectors-negative300.bin")
+        modelName = 'bert-base-uncased'
 
-        self.__trainingData = [self.__vectorizer.infer_vector(word_tokenize(sample[0].lower())) for sample in trainingData]
-        self.__model = svm.SVC(kernel='rbf',gamma=10,class_weight='balanced',C=120)
-        self.__model.fit(self.__trainingData, [sample[1] for sample in trainingData])
+        self.__tokenizer = AutoTokenizer.from_pretrained(modelName)
+        self.__trainingData = self.__tokenizer([sample[0] for sample in trainingData])
+
+        oneHotOutput = np.array([sum(to_categorical(sample,num_classes=len(self.__tokenizer.get_vocab()))) for sample in self.__trainingData['input_ids']])
+        self.__trainingData = oneHotOutput
+        C_range = np.linspace(0.1,1,10)
+        gamma_range = np.linspace(0.1,10,10)
+        degree = [3]
+        gridSearchParmeters = dict(gamma=gamma_range, C=C_range,
+                                   kernel=[kernel], degree=degree,
+                                   class_weight=['balanced'])
+
+        grid_search = GridSearchCV(svm.SVC(),
+                                   gridSearchParmeters,
+                                   cv=10, return_train_score=True,
+                                   n_jobs=-1)
+        grid_search.fit(self.__trainingData, [sample[1] for sample in
+                                        trainingData])
+
+        print("best param are {}".format(grid_search.best_params_))
+        means = grid_search.cv_results_['mean_test_score']
+        stds = grid_search.cv_results_['std_test_score']
+        for mean, std, param in zip(means, stds,
+                                    grid_search.cv_results_['params']):
+            print("{} (+/-) {} for {}".format(round(mean, 3),
+                                              round(std, 2), param))
+
+        self.__model = svm.SVC(gamma=grid_search.best_params_['gamma'],
+                               C=grid_search.best_params_['C'],
+                               kernel=grid_search.best_params_['kernel'],
+                               degree=grid_search.best_params_['degree'],
+                               class_weight='balanced')
+        self.__model.fit(self.__trainingData, [sample[1] for sample in
+                                         trainingData])
+
 
 
     def classify(self,sentence):
-        vec = self.__vectorizer.infer_vector(word_tokenize(sentence.lower()))
-        prediction = self.__model.predict([vec])
+        vec = self.__tokenizer([sentence])
+        oneHotOutput = np.array([sum(to_categorical(sample, num_classes=len(self.__tokenizer.get_vocab()))) for sample in vec['input_ids']])
+        vec = oneHotOutput
+        prediction = self.__model.predict(vec)
         return prediction[0]
 
 

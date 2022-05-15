@@ -244,7 +244,7 @@ class testConstants:
         {
             'data': 'Score',
             'model': SupportVectorMachineVectoriserTest,
-            'modelName': "SVM WordToVec",
+            'modelName': "SubWord_Count_SVM",
             'modelCreator': "Tobias Rothlin",
             'mlPrinciple': "WordToVec",
             'refrences': {
@@ -359,7 +359,7 @@ def modelPerofrmaceEvaluation(data,model,modelName,modelCreator,mlPrinciple,refr
 if __name__ == '__main__':
     testbenchDataHabler = DataHandler(testConstants.dataLocation,lan="English")
     #loops through the testConstants dict
-    for model in testConstants.modelsToEvaluate[-1:]:
+    for model in testConstants.modelsToEvaluate[-3:-2]:
         print("-Loading dataset:")
         if model['data'] == "Score":
             testData = testbenchDataHabler.getScoreData(testConstants.balancedDataSet)
