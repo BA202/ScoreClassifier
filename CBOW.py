@@ -65,7 +65,8 @@ model.compile(optimizer=opt,
               loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-fmnist_train_ds = tf.data.Dataset.from_tensor_slices((vectorize_layer(listOfContextWindows), vectorize_layer(listOfTargetWords)))
+fmnist_train_ds = tf.data.Dataset.from_tensor_slices((vectorize_layer(listOfContextWindows), to_categorical(vectorize_layer(listOfTargetWords),num_classes=vocab_size)))
+fmnist_train_ds = fmnist_train_ds.batch(10)
 
 
 model.fit(
