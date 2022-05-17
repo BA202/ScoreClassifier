@@ -8,10 +8,10 @@ from DataHandler.DataHandler import DataHandler
 import io
 
 
-runOnBitDataSet = False
+runOnBigDataSet = False
 
 sentenceData = []
-if runOnBitDataSet:
+if runOnBigDataSet:
     with open("Hotel_Reviews_ForEmbedding_Clean.txt") as inputFile:
         for line in inputFile.read().split("\n"):
             sentenceData.append(line)
