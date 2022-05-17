@@ -8,7 +8,7 @@ from DataHandler.DataHandler import DataHandler
 import io
 
 
-runOnBigDataSet = True
+runOnBigDataSet = False
 
 sentenceData = []
 if runOnBigDataSet:
@@ -65,10 +65,23 @@ model.compile(optimizer=opt,
               loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-fmnist_train_ds = tf.data.Dataset.from_tensor_slices((vectorize_layer(listOfContextWindows), to_categorical(vectorize_layer(listOfTargetWords),num_classes=vocab_size)))
-fmnist_train_ds = fmnist_train_ds.batch(10)
+features = vectorize_layer(listOfContextWindows)
+labels =  vectorize_layer(listOfTargetWords)
 
+train_features = tf.data.Dataset.from_tensor_slices(features)
+train_labels = tf.data.Dataset.from_tensor_slices(labels)
 
+#to_categorical(,num_classes=vocab_size)
+
+for el in next(train_labels.batch(3).as_numpy_iterator()):
+    print(el)
+
+train_labels.map(lambda x: ([0]))
+
+for el in next(train_labels.batch(3).as_numpy_iterator()):
+    print(el)
+
+fmnist_train_ds = []
 model.fit(
     fmnist_train_ds,
     batch_size=64,
