@@ -7,28 +7,25 @@ class PipelineInterface:
 
     def classify(self,sentence):
         res = self.__pipe(sentence)
-        print(res)
+        print(res,sentence)
         return res[0]['label'],res[0]['score']
 
 if __name__ == '__main__':
-    modelName = "bert-base-uncased_English_sentiment"
+    modelName = "bert-base-uncased_English_MultiLable_classification"
     myClass = PipelineInterface(modelName)
     from DataHandler.DataHandler import DataHandler
     myDataHander = DataHandler()
-    myScoreData = myDataHander.getScoreData()
-    myScoreData = [sample for sample in myScoreData if not sample[1] == "Neutral"]
-    i = 0
-    correct = 0
-    with open(modelName + "_WrongClassification.tsv", 'w') as outputFile:
-        outputFile.write(
-            "Sentence" + "\t" + "Prediction" + "\t" + "True" + "\n")
-    for sample in myScoreData:
-        print(i)
-        i += 1
-        predicted = myClass.classify(sample[0])
-        if predicted[0] == sample[1]:
-            correct += 1
+    myCatData = myDataHander.getCategorieData("Location",multilablel=True)
+    temp = {}
+    for sample in myCatData:
+        if sample[0] in temp.keys():
+            temp[sample[0]].add(sample[1])
         else:
-            with open(modelName+"_WrongClassification.tsv",'a') as outputFile:
-                outputFile.write(sample[0] + "\t" + predicted[0] + "\t" + sample[1] + "\n")
-    print(f"Accuracy: {correct/i}")
+            temp[sample[0]] = {sample[1]}
+
+    myCatData = [[key, list(temp[key])] for key in temp.keys()]
+    for i,sample in enumerate(myCatData):
+        if len(sample[1]) > 1:
+            print(sample[1])
+            myClass.classify(sample[0])
+            print(100*"-")

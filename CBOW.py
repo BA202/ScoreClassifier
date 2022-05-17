@@ -52,7 +52,6 @@ vectorize_layer = TextVectorization(
 
 vectorize_layer.adapt(sentenceData)
 
-
 model = Sequential([
   Embedding(vocab_size, embedding_dim, name="embedding"),
   Lambda(lambda x: K.mean(x, axis=1), output_shape=(embedding_dim,)),
@@ -66,10 +65,11 @@ model.compile(optimizer=opt,
               loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
+fmnist_train_ds = tf.data.Dataset.from_tensor_slices((vectorize_layer(listOfContextWindows), to_categorical(vectorize_layer(listOfTargetWords),num_classes=vocab_size)))
+fmnist_train_ds = fmnist_train_ds.shuffle(5000).batch(32)
+
 model.fit(
-    x = vectorize_layer(listOfContextWindows),
-    y = to_categorical(vectorize_layer(listOfTargetWords),num_classes=vocab_size),
-    validation_split=0.2,
+    fmnist_train_ds,
     batch_size=64,
     epochs=30,
     callbacks=[tensorboard_callback])

@@ -153,6 +153,7 @@ bert-base-uncased_English_classification
 bert-base-german-cased_German_sentiment
 bert-base-german-cased_German_classification
 bert-base-uncased_English_sentiment
+bert-base-uncased_English_MultiLable_classification
 DualClassClassificationV11
 logs
 metadata.tsv
