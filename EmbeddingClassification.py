@@ -10,7 +10,6 @@ from tensorflow.keras.layers import Dense, Embedding, GlobalAveragePooling1D
 from tensorflow.keras.layers import TextVectorization
 
 
-
 batch_size = 1024
 seed = 13
 train_ds = tf.keras.utils.text_dataset_from_directory(

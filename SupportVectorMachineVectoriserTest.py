@@ -10,6 +10,7 @@ from nltk.tokenize import word_tokenize
 from transformers import AutoTokenizer
 from tensorflow.keras.utils import to_categorical
 from scipy.sparse import csr_matrix, vstack
+from WordEmbedding import WordEmbedding
 
 
 
@@ -48,11 +49,12 @@ class SupportVectorMachineVectoriserTest:
         self.__stemmer = PorterStemmer()
         modelName = 'bert-base-uncased'
 
-        self.__tokenizer = AutoTokenizer.from_pretrained(modelName)
-        self.__trainingData = self.__tokenizer([sample[0] for sample in trainingData])
-
-        oneHotOutput = np.array([sum(to_categorical(sample,num_classes=len(self.__tokenizer.get_vocab()))) for sample in self.__trainingData['input_ids']])
-        self.__trainingData = oneHotOutput
+        self.__tokenizer = WordEmbedding("WordEmbeddings/CBOWEmbedding")
+        self.__trainingData = [self.__tokenizer.vectorize(sample[0])for sample in trainingData]
+        #self.__tokenizer = AutoTokenizer.from_pretrained(modelName)
+        #self.__trainingData = self.__tokenizer([sample[0] for sample in trainingData])
+        #oneHotOutput = np.array([sum(to_categorical(sample,num_classes=len(self.__tokenizer.get_vocab()))) for sample in self.__trainingData['input_ids']])
+        #self.__trainingData = oneHotOutput
         C_range = np.linspace(0.1,1,10)
         gamma_range = np.linspace(0.1,10,10)
         degree = [3]
@@ -86,10 +88,12 @@ class SupportVectorMachineVectoriserTest:
 
 
     def classify(self,sentence):
-        vec = self.__tokenizer([sentence])
-        oneHotOutput = np.array([sum(to_categorical(sample, num_classes=len(self.__tokenizer.get_vocab()))) for sample in vec['input_ids']])
-        vec = oneHotOutput
-        prediction = self.__model.predict(vec)
+        #vec = self.__tokenizer([sentence])
+        vec = self.__tokenizer.vectorize(sentence)
+
+        #oneHotOutput = np.array([sum(to_categorical(sample, num_classes=len(self.__tokenizer.get_vocab()))) for sample in vec['input_ids']])
+        #vec = oneHotOutput
+        prediction = self.__model.predict([vec])
         return prediction[0]
 
 

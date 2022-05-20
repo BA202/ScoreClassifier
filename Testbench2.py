@@ -244,7 +244,7 @@ class testConstants:
         {
             'data': 'Score',
             'model': SupportVectorMachineVectoriserTest,
-            'modelName': "SubWord_Count_SVM",
+            'modelName': "Word_CBOW_SVM",
             'modelCreator': "Tobias Rothlin",
             'mlPrinciple': "WordToVec",
             'refrences': {
