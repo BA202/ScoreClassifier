@@ -8,9 +8,11 @@ from nltk.stem import PorterStemmer
 from sklearn.model_selection import GridSearchCV
 from nltk.tokenize import word_tokenize
 from transformers import AutoTokenizer
+from transformers import TFAutoModel
 from tensorflow.keras.utils import to_categorical
 from scipy.sparse import csr_matrix, vstack
 from WordEmbedding import WordEmbedding
+from BertTokenizerVocabExport import BertWordTokenizer
 
 
 
@@ -49,12 +51,27 @@ class SupportVectorMachineVectoriserTest:
         self.__stemmer = PorterStemmer()
         modelName = 'bert-base-uncased'
 
-        self.__tokenizer = WordEmbedding("WordEmbeddings/CBOWEmbedding")
-        self.__trainingData = [self.__tokenizer.vectorize(sample[0])for sample in trainingData]
+        #self.__tokenizer = BertWordTokenizer("BertTokenizerWordVocab.json")
+        #self.__trainingData = self.__tokenizer.tokenize([sample[0] for sample in trainingData])
+
+        #self.__vectorizer = TFAutoModel.from_pretrained(modelName,from_pt=True)
+        #self.__trainingData = self.__vectorizer(self.__trainingData).last_hidden_state[:, 0]
+        #self.__trainingData = self.__trainingData.numpy()
+        #self.__tokenizer = WordEmbedding("WordEmbeddings/CBOWLargeDataSet")
+        #self.__trainingData = [self.__tokenizer.vectorize(sample[0])for sample in trainingData]
+
         #self.__tokenizer = AutoTokenizer.from_pretrained(modelName)
         #self.__trainingData = self.__tokenizer([sample[0] for sample in trainingData])
         #oneHotOutput = np.array([sum(to_categorical(sample,num_classes=len(self.__tokenizer.get_vocab()))) for sample in self.__trainingData['input_ids']])
         #self.__trainingData = oneHotOutput
+
+        self.__vectorizer = TfidfVectorizer(max_features=2500, min_df=5,
+                                            max_df=0.8, sublinear_tf=True,
+                                            use_idf=True, stop_words=stopwords)
+
+        self.__trainingData = self.__vectorizer.fit_transform(
+            [sample[0] for sample in trainingData])
+
         C_range = np.linspace(0.1,1,10)
         gamma_range = np.linspace(0.1,10,10)
         degree = [3]
@@ -89,11 +106,15 @@ class SupportVectorMachineVectoriserTest:
 
     def classify(self,sentence):
         #vec = self.__tokenizer([sentence])
-        vec = self.__tokenizer.vectorize(sentence)
+        #vec = self.__tokenizer.vectorize(sentence)
+        #toc = self.__tokenizer.tokenize([sentence])
+        #vec = self.__vectorizer(toc).last_hidden_state[:, 0]
+
+        vec = self.__vectorizer.transform([sentence])
 
         #oneHotOutput = np.array([sum(to_categorical(sample, num_classes=len(self.__tokenizer.get_vocab()))) for sample in vec['input_ids']])
         #vec = oneHotOutput
-        prediction = self.__model.predict([vec])
+        prediction = self.__model.predict(vec)
         return prediction[0]
 
 
