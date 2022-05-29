@@ -37,10 +37,10 @@ class PipelineInterface:
             return [res[0]['label'], res[0]['score']]
 
 if __name__ == '__main__':
-    modelName = "Tobias/bert-base-uncased_English_MultiLable_classification"
-    myClass = PipelineInterface(modelName)
+    modelName = "Tobias/bert-base-uncased_English_Hotel_sentiment"
+    myClass = PipelineInterface(modelName,False)
     from DataHandler.DataHandler import DataHandler
-    myDataHander = DataHandler()
+    myDataHander = DataHandler(lan="German")
     myCatData = myDataHander.getCategorieData("Location",multilablel=True)
     temp = {}
     for sample in myCatData:
@@ -51,11 +51,11 @@ if __name__ == '__main__':
 
     myCatData = [[key, list(temp[key])] for key in temp.keys()]
     errors = 0
-    for i,sample in enumerate(myCatData):
-        if len(sample[1]) == 1:
-            res = myClass.classify(sample[0])
-            if len(res) > 1:
-                errors += 1
-                print(sample[1])
-                print(res,errors)
-                print(100*"-")
+    print(myClass.classify("i really satisfied with this beautiful hotel, friendly staffs, and delicious foods"))
+# for i,sample in enumerate(myCatData):
+#     if len(sample[1]) > 1:
+#         res = myClass.classify(sample[0])
+#         errors += 1
+#         print(sample[1])
+#         print(res,errors)
+#         print(100*"-")

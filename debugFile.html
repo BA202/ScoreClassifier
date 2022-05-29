@@ -16,6 +16,10 @@
                 position: relative;
                 top: -50px;
             }
+            
+            .Bold{
+                font-weight: bold;
+            }
     
             .TitleWithText {
                 padding-left: 20px;
@@ -58,10 +62,11 @@
                 display: block;
                 width: 500px;
                 font-weight: lighter;
+                font-size: 100%;
             }
     
             .OverviewImg {
-                height: 250px;
+                height: 200px;
                 
             }
     
@@ -104,6 +109,10 @@
                 font-size: 15 px;
     
             }
+
+            .Lighter{
+                font-weight: lighter;
+            }
             
             .HorizontalBar{
                 border-top-width: 3px;
@@ -144,6 +153,10 @@
                 height: 250px;
                 padding-left: 80px;
             }
+            
+            .ModelParametersDiv{
+                margin-top: 40px;
+            }
     
             .ClassificationPerformanceTable {
                 margin-top: 20px;
@@ -172,6 +185,13 @@
             .ConfusionMatrix {
                 height: 350px;
                 align-items: flex-start;
+            }
+            
+            .infoLabel{
+                font-size: 8px;
+                font-weight: 300;
+                padding: 2px;
+                margin: 2px;
             }
     
             .svgImage {
@@ -244,11 +264,11 @@
     <div class="Header">
 <div class="ModelName">
             <label class="TitleWithText">Model Name:</label>
-            <label>ScoreClassificationV1</label>
+            <label>Tobias/bert-base-uncased_English_Hotel_sentiment</label>
         </div>
         <div class="TestDate">
             <label class="TitleWithText">Test Date:</label>
-            <label>17/03/2022 17:10:58</label>
+            <label>29/05/2022 11:37:38</label>
         </div>
         <div class="Creator">
             <label class="TitleWithText">Creator:</label>
@@ -261,26 +281,22 @@
     <div class="Overview">
         <div class="LeftOverview">
             <h4>ML Principle:</h4>
-            <label>Multinomial Naive Bayes</label>
+            <label>BERT</label>
     
             <h4>References:</h4>
             <ul>
-                <li><a href="https://www.mygreatlearning.com/blog/multinomial-naive-bayes-explained/">NultinomialNB Explained</a></li>
-<li><a href="http://spark-public.s3.amazonaws.com/nlp/slides/naivebayes.pdf">Stanford NLP Course</a></li>
-<li><a href="https://www.youtube.com/playlist?list=PLLssT5z_DsK8HbD2sPcUIDfQ7zmBarMYv">Stanford NLP Lecture</a></li>
-<li><a href="https://www.tutorialspoint.com/python_text_processing/python_remove_stopwords.htm">Engilsh Stopwords</a></li>
-
+                
             </ul>
     
         </div>
     
         <div class="MiddleOverview">
             <h4>Algorithm Description:</h4>
-            <label class="AlgoDescription">The learning algorithm used in this classification is the Multinomial Naïve Bayes. This approach was chosen as it is easy to implement and is computational very efficient. The first step in the classification pipeline is removing all strop words for example 'i', 'me', 'my', 'myself', etc. A list of English stop word is provided by the nltk module. The stop words remover just removes every word that is in the list of stop words. Next the sentence is passed through the stemmer. Stemmers remove morphological affixes from words, leaving only the word stem. This is done with the PorterStemmer class from the nltk module. The final preprocessing step is to vectorize the sentence. This results in a bag of words representation of the sentence. First all the words must be tokenized and then counted. The result will be a numerical feature vector. To generate this vector the CountVectorizer class from sklearn is used.  This class implements both tokenization and occurrence counting in a single class. With the sentence now represented in a vector the Naïve Bayes classifier can work with this vector. For the implementation of the Naïve Bayes classifier the MultinomialNB class (sklearn) is used. </label>
+            <label class="AlgoDescription">The BERT model is a pre-trained Encoder trained on masked language modelling. BERT stands for Bidirectional Encoder Representations from Transformers. To train the model, words were randomly masked in a sentence and based on the unmasked words. The model needs to predict the masked word. BERT was trained on a corpus comprising of Books and English Wikipedia containing around 3.3 Billion words.</label>
         </div>
     
         <div class="RightOverview">
-            <img class="OverviewImg" src="/Users/tobiasrothlin/Documents/BachelorArbeit/ScoreClassifier/OverviewImg.png" alt="Overview Image">
+            <img class="OverviewImg" src="/Users/tobiasrothlin/Documents/BachelorArbeit/Bilder/BERT.png" alt="Overview Image">
             <h6>Classification Pipeline</h6>
         </div>
     </div>
@@ -289,18 +305,19 @@
     
     <h2>Metrics</h2>
     <label>
-        <table>
-            <tr>
-                <th class="SplitInfoTable">Data:</th>
-                <th class="SplitInfoTable">ClassifiedDataSetV1.1 with 10 folds cross validation</th>
-            </tr>
-            <tr>
-                <th class="SplitInfoTable">Split seed:</th>
-                <th class="SplitInfoTable">3.423431</th>
-            </tr>
-        </table></label>
+                <table>
+                    <tr>
+                        <th class="SplitInfoTable Bold">Data:</th>
+                        <th class="SplitInfoTable">ClassifiedFilesEnglish2.0</th>
+                        <th class="SplitInfoTable Bold">Split seed:</th>
+                        <th class="SplitInfoTable">None</th>
+                        <th class="SplitInfoTable Bold">Training accuracy:</th>
+                        <th class="SplitInfoTable">72.74%</th>
+                    </tr>
+                </table></label>
     <div class="TrainingDataset">
         <h4>Training Dataset</h4>
+        <label class="infoLabel">(average)</label>
         <div class="TrainingDataView">
             <table class="TrainingDataTable">
                 <tr>
@@ -308,52 +325,35 @@
                     <th class="tableHeader">Number of samples</th>
                 </tr>
                 <tr>
-                        <th class="TrainingDataClasses">Room</th>
-                        <th>399</th> 
+                        <th class="TrainingDataClasses">Positive</th>
+                        <th>1044</th> 
                     </tr>
 <tr>
-                        <th class="TrainingDataClasses">Location</th>
-                        <th>379</th> 
+                        <th class="TrainingDataClasses">Neutral</th>
+                        <th>382</th> 
                     </tr>
 <tr>
-                        <th class="TrainingDataClasses">Staff</th>
-                        <th>197</th> 
-                    </tr>
-<tr>
-                        <th class="TrainingDataClasses">Unknown</th>
-                        <th>181</th> 
-                    </tr>
-<tr>
-                        <th class="TrainingDataClasses">HotelOrganisation</th>
-                        <th>141</th> 
-                    </tr>
-<tr>
-                        <th class="TrainingDataClasses">Food</th>
-                        <th>129</th> 
-                    </tr>
-<tr>
-                        <th class="TrainingDataClasses">ReasonForStay</th>
-                        <th>117</th> 
-                    </tr>
-<tr>
-                        <th class="TrainingDataClasses">GeneralUtility</th>
-                        <th>45</th> 
+                        <th class="TrainingDataClasses">Negative</th>
+                        <th>342</th> 
                     </tr>
  
             </table>
     
             <div class="PiChartTrainingData">
                 <img class="svgImage" src="/Users/tobiasrothlin/Documents/BachelorArbeit/ScoreClassifier/temp/PieChartTrainingData.svg" alt="PlotSample">
+                <label class="infoLabel">Average distribution of the samples</label>
             </div>
     
             <div class="BarChartTrainingData">
                 <img class="svgImage" src="/Users/tobiasrothlin/Documents/BachelorArbeit/ScoreClassifier/temp/BarChartTrainingData.png" alt="PlotSample">
+                <label class="infoLabel">Distribution of the samples contained in each test split</label>
             </div>
         </div>
     </div>
     
     <div class="TrainingDataset">
         <h4>Test Dataset</h4>
+        <label class="infoLabel">(average)</label>
         <div class="TrainingDataView">
             <table class="TrainingDataTable">
                 <tr>
@@ -361,52 +361,35 @@
                     <th class="tableHeader">Number of samples</th>
                 </tr>
                 <tr>
-                        <th class="TrainingDataClasses">Room</th>
-                        <th>44</th> 
+                        <th class="TrainingDataClasses">Positive</th>
+                        <th>458</th> 
                     </tr>
 <tr>
-                        <th class="TrainingDataClasses">Location</th>
-                        <th>42</th> 
+                        <th class="TrainingDataClasses">Neutral</th>
+                        <th>196</th> 
                     </tr>
 <tr>
-                        <th class="TrainingDataClasses">Staff</th>
-                        <th>21</th> 
-                    </tr>
-<tr>
-                        <th class="TrainingDataClasses">Unknown</th>
-                        <th>20</th> 
-                    </tr>
-<tr>
-                        <th class="TrainingDataClasses">HotelOrganisation</th>
-                        <th>15</th> 
-                    </tr>
-<tr>
-                        <th class="TrainingDataClasses">Food</th>
-                        <th>14</th> 
-                    </tr>
-<tr>
-                        <th class="TrainingDataClasses">ReasonForStay</th>
-                        <th>13</th> 
-                    </tr>
-<tr>
-                        <th class="TrainingDataClasses">GeneralUtility</th>
-                        <th>5</th> 
+                        <th class="TrainingDataClasses">Negative</th>
+                        <th>110</th> 
                     </tr>
  
             </table>
     
             <div class="PiChartTrainingData">
                 <img class="svgImage" src="/Users/tobiasrothlin/Documents/BachelorArbeit/ScoreClassifier/temp/PieChartTestData.svg" alt="PlotSample">
+                <label class="infoLabel">Average distribution of the samples</label>
             </div>
     
             <div class="BarChartTrainingData">
                 <img class="svgImage" src="/Users/tobiasrothlin/Documents/BachelorArbeit/ScoreClassifier/temp/BarChartTestData.png" alt="PlotSample">
+                <label class="infoLabel">Distribution of the samples contained in each test split</label>
             </div>
         </div>
     </div>
     
     <div class="StackedGroupedBarChartDataSet">
         <img class="svgImage" src="/Users/tobiasrothlin/Documents/BachelorArbeit/ScoreClassifier/temp/BarChartOverviewData.svg" alt="PlotSample">
+        <label class="infoLabel">Detailed training split composition</label>
     </div>
 
         <h2 class="break-before">Classification Performance</h2>
@@ -421,76 +404,47 @@
                             <th class="tableHeader">F1 Score</th>
                         </tr>
                             <tr>
-                <th class="TrainingDataClasses">Room</th>
-                <th class="ImgCell">69.04%</th>
-                <th class="ImgCell">89.82%</th>
-                <th class="ImgCell">78.07%</th>
+                <th class="TrainingDataClasses">Positive</th>
+                <th class="ImgCell">67.72%</th>
+                <th class="ImgCell">98.47%</th>
+                <th class="ImgCell">80.25%</th>
                 </tr>
 <tr>
-                <th class="TrainingDataClasses">Location</th>
-                <th class="ImgCell">73.03%</th>
-                <th class="ImgCell">92.64%</th>
-                <th class="ImgCell">81.68%</th>
+                <th class="TrainingDataClasses">Neutral</th>
+                <th class="ImgCell">63.64%</th>
+                <th class="ImgCell">10.71%</th>
+                <th class="ImgCell">18.34%</th>
                 </tr>
 <tr>
-                <th class="TrainingDataClasses">Staff</th>
-                <th class="ImgCell">70.54%</th>
-                <th class="ImgCell">73.15%</th>
-                <th class="ImgCell">71.82%</th>
-                </tr>
-<tr>
-                <th class="TrainingDataClasses">Unknown</th>
-                <th class="ImgCell">45.30%</th>
-                <th class="ImgCell">26.37%</th>
-                <th class="ImgCell">33.33%</th>
-                </tr>
-<tr>
-                <th class="TrainingDataClasses">HotelOrganisation</th>
-                <th class="ImgCell">25.81%</th>
-                <th class="ImgCell">10.26%</th>
-                <th class="ImgCell">14.68%</th>
-                </tr>
-<tr>
-                <th class="TrainingDataClasses">Food</th>
-                <th class="ImgCell">79.86%</th>
-                <th class="ImgCell">77.08%</th>
-                <th class="ImgCell">78.45%</th>
-                </tr>
-<tr>
-                <th class="TrainingDataClasses">ReasonForStay</th>
-                <th class="ImgCell">56.84%</th>
-                <th class="ImgCell">41.54%</th>
-                <th class="ImgCell">48.00%</th>
-                </tr>
-<tr>
-                <th class="TrainingDataClasses">GeneralUtility</th>
-                <th class="ImgCell">92.86%</th>
-                <th class="ImgCell">26.00%</th>
-                <th class="ImgCell">40.62%</th>
+                <th class="TrainingDataClasses">Negative</th>
+                <th class="ImgCell">73.85%</th>
+                <th class="ImgCell">43.64%</th>
+                <th class="ImgCell">54.86%</th>
                 </tr>
 <tr>
                 <th class="HorizontalBar TrainingDataClasses Bold">Accuracy</th>
                 <th class="HorizontalBar ImgCell"></th>
                 <th class="HorizontalBar ImgCell"></th>
-                <th class="HorizontalBar ImgCell">67.73%</th>
+                <th class="HorizontalBar ImgCell">68.06%</th>
                 </tr>
 <tr>
                 <th class="TrainingDataClasses Bold">Macro Average</th>
-                <th class="ImgCell">64.16%</th>
-                <th class="ImgCell">54.61%</th>
-                <th class="ImgCell">55.83%</th>
+                <th class="ImgCell">68.40%</th>
+                <th class="ImgCell">50.94%</th>
+                <th class="ImgCell">51.15%</th>
                 </tr>
 <tr>
                 <th class="TrainingDataClasses Bold">Weighted Average</th>
-                <th class="ImgCell">64.30%</th>
-                <th class="ImgCell">67.73%</th>
-                <th class="ImgCell">64.18%</th>
+                <th class="ImgCell">67.55%</th>
+                <th class="ImgCell">68.06%</th>
+                <th class="ImgCell">60.71%</th>
                 </tr>
 
                     </table>
                 </div>
                 <div class="BarChartTrainingData">
                     <img class="svgImage" src="/Users/tobiasrothlin/Documents/BachelorArbeit/ScoreClassifier/temp/BoxPlotPerformance.png" alt="PlotSample">
+                    <label class="infoLabel">Distribution of the F1-Score</label>
                 </div>
             </div>
             <div class="PerformancePlots">
@@ -506,7 +460,19 @@
             <div class="F1ScoreBySplit">
                 <h4>F1 Socre by split:</h4>
                 <img class="svgImage" src="/Users/tobiasrothlin/Documents/BachelorArbeit/ScoreClassifier/temp/PlotFScore.png" alt="PlotSample">
+                <label class="infoLabel">F1-Score per split</label>
             </div>
+            <div class ="ModelParametersDiv">
+                <table>
+                    <tr>
+                                <th class="SplitInfoTable Bold">Fold:1</th>
+                                <th class="SplitInfoTable">-:</th>
+                                <th class="SplitInfoTable Lighter">-</th>
+                            </tr>
+                </table>
+            </div>
+            
+            
         </div>
     </div>
     </html>

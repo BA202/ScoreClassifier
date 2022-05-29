@@ -1,4 +1,4 @@
-from transformers import TFBertModel, TFAutoModelForSequenceClassification, TFAutoModelForMultipleChoice
+from transformers import TFBertModel, TFAutoModelForSequenceClassification
 from transformers import AutoTokenizer
 import transformers
 import os
@@ -9,7 +9,6 @@ from DataHandler.DataHandler import DataHandler
 import numpy as np
 import random
 import json
-from tensorflow.keras.utils import to_categorical
 
 os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 
@@ -19,7 +18,7 @@ epochs = 5
 learning_rate = 5e-5
 seed = 6.838324
 language = "English"
-path = f"{modelName}_{language}_classification"
+path = f"{modelName}_{language}_sentiment"
 
 productionReport = ModelReport(
     modelName,
@@ -35,42 +34,32 @@ productionReport = ModelReport(
 
 
 dataHandler = DataHandler("", language)
-trainingData = dataHandler.getCategorieData("Location",multilablel=True)
-temp = {}
-for sample in trainingData:
-    if sample[0] in temp.keys():
-        temp[sample[0]].add(sample[1])
-    else:
-        temp[sample[0]] = {sample[1]}
+trainingData = dataHandler.getScoreData()
 
-trainingData = [[key,list(temp[key]) ]for key in temp.keys()]
-for sample in trainingData:
-    pass
-    #print(sample[0],sample[1])
-#random.seed(seed)
-#random.shuffle(trainingData)
+random.seed(seed)
+random.shuffle(trainingData)
 
 testData = trainingData[-100:]
 trainingData = trainingData[:-100]
 
-setOfCats = list({sample[1][0] for sample in trainingData})
+setOfCats = list({sample[1] for sample in trainingData})
 catToInt = {cat: i for i, cat in enumerate(list(setOfCats))}
 intToCat = {catToInt[key]: key for key in catToInt.keys()}
 
 tokenizer = AutoTokenizer.from_pretrained(modelName)
 model = TFAutoModelForSequenceClassification.from_pretrained(
-    modelName, from_pt=True, num_labels=len(setOfCats), problem_type="multi_label_classification"
+    modelName, from_pt=True, num_labels=len(setOfCats)
 )
+
 tfTrainingData = []
 
 productionReport.addTrainingSet(trainingData)
-
-optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
-loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
-metric = tf.metrics.SparseCategoricalAccuracy()
 tensorboardCallback = tf.keras.callbacks.TensorBoard(log_dir="logs")
-model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["categorical_accuracy"])
-model.summary()
+optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+metric = tf.metrics.SparseCategoricalAccuracy()
+model.compile(optimizer=optimizer, loss=loss, metrics=metric)
+
 tokSens = tokenizer(
     [sample[0] for sample in trainingData],
     add_special_tokens=True,
@@ -82,16 +71,12 @@ tokSens = tokenizer(
     return_attention_mask=True,
     verbose=True,
 )
-temp = []
-for sample in trainingData:
-    #print(sample)
-    temp.append(sum(np.array([to_categorical(catToInt[lbl],num_classes=len(setOfCats)) for lbl in sample[1]])))
-y = np.array(temp)
+
 
 model.fit(
-    x=tokSens['input_ids'],
-    y=y,
-    validation_split=0.2,
+    x=tokSens["input_ids"],
+    y=np.array([catToInt[sample[1]] for sample in trainingData]),
+    validation_split=0,
     batch_size=64,
     epochs=epochs,
     callbacks=[tensorboardCallback]
@@ -99,7 +84,6 @@ model.fit(
 
 
 def classify(sentence):
-    return intToCat[0]
     senVec = tokenizer(
         text=[sentence],
         add_special_tokens=True,
@@ -123,11 +107,26 @@ def classify(sentence):
 
 testResults = []
 trainingResults = []
+
+with open("ErrorFileTraining.tsv", "a") as errorFile:
+    errorFile.write(f"Sentence\tTrue\tPredicted\n")
+
+with open("ErrorFileTest.tsv", "a") as errorFile:
+    errorFile.write(f"Sentence\tTrue\tPredicted\n")
+
 for testCase in testData:
-    testResults.append([testCase[1], classify(testCase[0])])
+    pred = classify(testCase[0])
+    testResults.append([testCase[1], pred])
+    if pred != testCase[1]:
+        with open("ErrorFileTest.tsv", "a") as errorFile:
+            errorFile.write(f"{testCase[0]}\t{testCase[1]}\t{pred}\n")
 
 for testCase in trainingData:
-    trainingResults.append([testCase[1], classify(testCase[0])])
+    pred = classify(testCase[0])
+    trainingResults.append([testCase[1],pred ])
+    if pred != testCase[1]:
+        with open("ErrorFileTraining.tsv", "a") as errorFile:
+            errorFile.write(f"{testCase[0]}\t{testCase[1]}\t{pred}\n")
 
 productionReport.addTestResults(testResults)
 productionReport.addTrainingResults(

@@ -162,3 +162,5 @@ HotelSentiment
 aclImdb_v1.tar.gz
 *.ai
 Hotel_Reviews_ForEmbedding_Clean.txt
+WordEmbeddings
+bert-base-uncased_German_MultiLable_classification
